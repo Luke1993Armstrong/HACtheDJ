@@ -1,0 +1,15 @@
+{
+  "name": "hacdj",
+  "version": "1.0.0",
+  "description": "A Discord bot to replace SL",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx ts-node .\\index.ts"
+  },
+  "author": "Avo-cado",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^13.1.0",
+    "typescript": "^4.4.3"
+  }
+}

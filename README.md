@@ -2,7 +2,10 @@
 Just another Discord music bot made by Avo-cado!
 
 # Run
-Just go
+
+First install [ffmpeg](https://ffmpeg.org/)
+
+Then go
 
 ```
 npm install

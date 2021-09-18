@@ -10,6 +10,8 @@ with [Chocolatey](https://chocolatey.org/) (if you don't have it):
 choco install ffmpeg
 ```
 
+Make sure you have [Node.js](https://nodejs.org/) **version 16.* at least**:
+
 Then go
 
 ```

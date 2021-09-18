@@ -58,13 +58,12 @@ client.on("messageCreate", async (message) => {
     };
 
     const runPlayCommand = async (query: string) => {
-        if(!query) {
-            message.channel.send("Tell me what to play please!");
+        if(!message.guild) {
             return;
         }
 
-        if(!message.guild) {
-            message.channel.send("You're not in a server?");
+        if(!query) {
+            message.channel.send("Tell me what to play please!");
             return;
         }
 
@@ -95,12 +94,21 @@ client.on("messageCreate", async (message) => {
         const resource = createAudioResource(ytdl.downloadFromInfo(videoInfo));
 
         audioPlayer.play(resource);
+
+        const reactionEmoji = message.guild.emojis.cache.find(emoji => emoji.name === 'carrotApproved');
+        if(reactionEmoji) {
+            message.react(reactionEmoji);
+        }
     };
 
     if(message.author.bot) {
         return;
     }
     if(!message.content.startsWith(prefix)) {
+        return;
+    }
+    if(!message.guild) {
+        message.channel.send("You're not in a server?");
         return;
     }
     console.log(`> From '${message.member?.nickname}': ${message.content}`);

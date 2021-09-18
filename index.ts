@@ -101,6 +101,10 @@ client.on("messageCreate", async (message) => {
         }
     };
 
+    const runBakaCommand = async () => {
+        message.channel.send("yes, its Harrison");
+    };
+
     if(message.author.bot) {
         return;
     }
@@ -123,6 +127,8 @@ client.on("messageCreate", async (message) => {
         case "play":
         case "p":
             return runPlayCommand(params.join(" "));
+        case "baka":
+            return runBakaCommand();
     }
 });
 

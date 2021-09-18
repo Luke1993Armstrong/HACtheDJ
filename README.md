@@ -17,4 +17,4 @@ and then
 npm run start
 ```
 
-You'll need to ask someone for `auth.json` though :)
+You'll need to ask someone for `config.json` though :)

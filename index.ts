@@ -11,6 +11,8 @@ import {
     joinVoiceChannel,
 } from "@discordjs/voice";
 
+import * as ytdl from "ytdl-core";
+
 const {
     token,
     prefix,
@@ -62,7 +64,7 @@ client.on("messageCreate", async (message) => {
         message.channel.send({embeds: [embed]});
     };
 
-    const runPlayCommand = (query: string) => {
+    const runPlayCommand = async (query: string) => {
         if(!query) {
             message.channel.send("Tell me what to play please!");
             return;
@@ -84,6 +86,9 @@ client.on("messageCreate", async (message) => {
             message.channel.send(`Voice channel ${voiceChannel.name} isn't joinable?`);
         }
 
+        const videoInfo = await ytdl.getInfo(query);
+        message.channel.send(`OK!! Playing ${videoInfo.videoDetails.title}...`);
+
         const connection = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: message.guild.id,
@@ -91,8 +96,10 @@ client.on("messageCreate", async (message) => {
         });
 
         connection.subscribe(audioPlayer);
-        // const resource = createAudioResource("./test.mp3");
-        // audioPlayer.play(resource);
+
+        const resource = createAudioResource(ytdl.downloadFromInfo(videoInfo));
+
+        audioPlayer.play(resource);
     };
 
     const commandAndParams = message.content.split(" ");

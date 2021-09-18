@@ -1,8 +1,12 @@
-import { Client, Intents } from 'discord.js';
+import {
+    Client,
+    Intents,
+    MessageEmbed,
+} from 'discord.js';
 
 const {
     token,
-    prefix
+    prefix,
 }: {
     token: string,
     prefix: string
@@ -28,7 +32,18 @@ client.on("messageCreate", async (message) => {
         return;
     }
 
-    message.channel.send(`OwO hewo ${message.author.username}`);
+    const embed = new MessageEmbed()
+        .setColor("#5599EE")
+        .setTitle("OwO Hewwo")
+        .setDescription("I've come to avenge S.L's death!!!")
+        .setThumbnail("https://ddoodm.com//gen/images/misc/sl.jpg")
+        .addFields(
+            { name: 'Regular field title', value: 'Some value here' },
+        )
+        .setTimestamp()
+        .setFooter("Bla bla some footer");
+
+    message.channel.send({embeds: [embed]});
 });
 
 client.login(token);

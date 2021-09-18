@@ -5,6 +5,8 @@ import {
 } from 'discord.js';
 
 import {
+    createAudioPlayer,
+    createAudioResource,
     generateDependencyReport as generateDiscordVoiceDependencyReport,
     joinVoiceChannel,
 } from "@discordjs/voice";
@@ -24,6 +26,8 @@ const client = new Client({ intents: [
     Intents.FLAGS.GUILD_MESSAGES,
     Intents.FLAGS.GUILD_VOICE_STATES,
 ] });
+
+const audioPlayer = createAudioPlayer();
 
 client.once('ready', () => {
 	console.log('OwO hewo');
@@ -80,11 +84,15 @@ client.on("messageCreate", async (message) => {
             message.channel.send(`Voice channel ${voiceChannel.name} isn't joinable?`);
         }
 
-        joinVoiceChannel({
+        const connection = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: message.guild.id,
             adapterCreator: message.guild?.voiceAdapterCreator,
         });
+
+        connection.subscribe(audioPlayer);
+        // const resource = createAudioResource("./test.mp3");
+        // audioPlayer.play(resource);
     };
 
     const commandAndParams = message.content.split(" ");

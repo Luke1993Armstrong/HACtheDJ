@@ -42,13 +42,6 @@ client.once('disconnect', () => {
 });
 
 client.on("messageCreate", async (message) => {
-    if(message.author.bot) {
-        return;
-    }
-    if(!message.content.startsWith(prefix)) {
-        return;
-    }
-
     const runTestCommand = () => {
         const embed = new MessageEmbed()
             .setColor("#5599EE")
@@ -88,12 +81,14 @@ client.on("messageCreate", async (message) => {
 
         const videoInfo = await ytdl.getInfo(query);
         message.channel.send(`OK!! Playing ${videoInfo.videoDetails.title}...`);
+        console.log(`Playing ${videoInfo.videoDetails.video_url}`);
 
         const connection = joinVoiceChannel({
             channelId: voiceChannel.id,
             guildId: message.guild.id,
             adapterCreator: message.guild?.voiceAdapterCreator,
         });
+        console.log(`Joined channel ${voiceChannel.name}`);
 
         connection.subscribe(audioPlayer);
 
@@ -101,6 +96,14 @@ client.on("messageCreate", async (message) => {
 
         audioPlayer.play(resource);
     };
+
+    if(message.author.bot) {
+        return;
+    }
+    if(!message.content.startsWith(prefix)) {
+        return;
+    }
+    console.log(`> From '${message.member?.nickname}': ${message.content}`);
 
     const commandAndParams = message.content.split(" ");
     const command = commandAndParams.slice(0, 1)[0].substring(prefix.length); // trim prefix

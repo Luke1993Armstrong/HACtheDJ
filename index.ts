@@ -5,13 +5,13 @@ import {
 } from 'discord.js';
 
 import {
-    createAudioPlayer,
     createAudioResource,
     generateDependencyReport as generateDiscordVoiceDependencyReport,
     joinVoiceChannel,
 } from "@discordjs/voice";
 
 import * as ytdl from "ytdl-core";
+import { createDJ } from './dj/create';
 
 const {
     token,
@@ -23,13 +23,15 @@ const {
 
 console.log(generateDiscordVoiceDependencyReport());
 
-const client = new Client({ intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-] });
+const client = new Client({
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+    ],
+});
 
-const audioPlayer = createAudioPlayer();
+const DJ = createDJ();
 
 client.once('ready', () => {
 	console.log('OwO hewo');
@@ -61,6 +63,7 @@ client.on("messageCreate", async (message) => {
         if(!message.guild) {
             return;
         }
+        const guildId = message.guild.id;
 
         if(!query) {
             message.channel.send("Tell me what to play please!");
@@ -83,21 +86,22 @@ client.on("messageCreate", async (message) => {
         console.log(`Playing ${videoInfo.videoDetails.video_url}`);
 
         const connection = joinVoiceChannel({
+            guildId,
             channelId: voiceChannel.id,
-            guildId: message.guild.id,
             adapterCreator: message.guild?.voiceAdapterCreator,
         });
         console.log(`Joined channel ${voiceChannel.name}`);
 
-        connection.subscribe(audioPlayer);
+        if(!DJ.isInitialized(guildId)) {
+            DJ.init(guildId, connection);
+        }
 
         const sourceStream = ytdl.downloadFromInfo(videoInfo, {
             filter: "audioonly",
             quality: "highestaudio",
         });
         const resource = createAudioResource(sourceStream);
-
-        audioPlayer.play(resource);
+        DJ.queue(guildId, resource);
 
         const reactionEmoji = message.guild.emojis.cache.find(emoji => emoji.name === 'carrotApproved');
         if(reactionEmoji) {

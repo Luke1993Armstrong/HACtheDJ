@@ -3,13 +3,6 @@ Just another Discord music bot made by Avo-cado!
 
 # Run
 
-First install [ffmpeg](https://ffmpeg.org/)
-with [Chocolatey](https://chocolatey.org/) (if you don't have it):
-
-```
-choco install ffmpeg
-```
-
 Make sure you have [Node.js](https://nodejs.org/) **version 16+ at least**:
 
 Then go
@@ -33,3 +26,11 @@ FFmpeg
 - version: 4.4-essentials_build-www.gyan.dev      
 - libopus: yes
 ```
+
+# Dev Setup
+
+Step 1. Use VS Code
+
+Step 2. Install Prettier and eslint plugins from the Extensions tab.
+
+Step 3. `Ctrl + shift + p` while in a `.ts` file and search for `Format Document`. Selecting it should prompt you to select the code formatter - choose Prettier.

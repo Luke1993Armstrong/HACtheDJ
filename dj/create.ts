@@ -7,30 +7,37 @@ import {
 } from "@discordjs/voice";
 
 export type Track = {
-    resource: AudioResource,
+    resource: AudioResource;
 };
 
 type guildId = string;
 type DJContext = {
-    audioPlayer: AudioPlayer,
-    queue: Track[],
+    audioPlayer: AudioPlayer;
+    queue: Track[];
 };
 
-export const createDJ = () => {
+interface DJAY {
+    isInitialized: (guild: guildId) => boolean;
+    init: (guild: guildId, connection: VoiceConnection) => void;
+    queue: (guild: guildId, track: Track) => void;
+    skip: (guild: guildId) => void;
+}
+
+export const createDJ = (): DJAY => {
     const contexts = new Map<guildId, DJContext>();
 
     const getContext = (guild: guildId): DJContext => {
         const context = contexts.get(guild);
-        if(!context) {
+        if (!context) {
             throw new Error(`No context set up for guild ${guild}`);
         }
         return context;
     };
 
     const processQueue = (context: DJContext) => {
-        if(context.audioPlayer.state.status === AudioPlayerStatus.Idle) {
+        if (context.audioPlayer.state.status === AudioPlayerStatus.Idle) {
             const track = context.queue.shift();
-            if(track) {
+            if (track) {
                 context.audioPlayer.play(track.resource);
             }
         }

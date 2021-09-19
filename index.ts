@@ -91,7 +91,11 @@ client.on("messageCreate", async (message) => {
 
         connection.subscribe(audioPlayer);
 
-        const resource = createAudioResource(ytdl.downloadFromInfo(videoInfo));
+        const sourceStream = ytdl.downloadFromInfo(videoInfo, {
+            filter: "audioonly",
+            quality: "highestaudio",
+        });
+        const resource = createAudioResource(sourceStream);
 
         audioPlayer.play(resource);
 

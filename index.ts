@@ -82,8 +82,8 @@ client.on("messageCreate", async (message) => {
         }
 
         const videoInfo = await ytdl.getInfo(query);
-        message.channel.send(`OK!! Playing ${videoInfo.videoDetails.title}...`);
-        console.log(`Playing ${videoInfo.videoDetails.video_url}`);
+        message.channel.send(`OK!! I'm quwuing ${videoInfo.videoDetails.title}...`);
+        console.log(`Requesting ${videoInfo.videoDetails.video_url}`);
 
         const connection = joinVoiceChannel({
             guildId,
@@ -101,12 +101,19 @@ client.on("messageCreate", async (message) => {
             quality: "highestaudio",
         });
         const resource = createAudioResource(sourceStream);
-        DJ.queue(guildId, resource);
+        DJ.queue(guildId, {resource});
 
         const reactionEmoji = message.guild.emojis.cache.find(emoji => emoji.name === 'carrotApproved');
         if(reactionEmoji) {
             message.react(reactionEmoji);
         }
+    };
+
+    const runSkipCommand = () => {
+        if(!message.guild) {
+            return;
+        }
+        return DJ.skip(message.guild.id);
     };
 
     const runBakaCommand = async () => {
@@ -135,6 +142,8 @@ client.on("messageCreate", async (message) => {
         case "play":
         case "p":
             return runPlayCommand(params.join(" "));
+        case "skip":
+            return runSkipCommand();
         case "baka":
             return runBakaCommand();
     }

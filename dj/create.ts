@@ -45,25 +45,37 @@ export class HACTheDJ {
         return context;
     }
 
-    processQueue(context: DJContext): void {
-        if (context.audioPlayer.state.status === AudioPlayerStatus.Idle) {
-            const track = context.queue.shift();
-            if (track) {
-                context.audioPlayer.play(track.resource);
-                if (context.singleLoopEnabled || context.queueLoopEnabled) {
-                    const newTrack: Track = {
-                        ...track,
-                        resource: createAudioResourceForTrack(track.details),
-                    };
-                    if (context.singleLoopEnabled) {
-                        // if we're looping the same song, add it back to the start
-                        context.queue.unshift(newTrack);
-                    } else if (context.queueLoopEnabled) {
-                        // if we're looping the queue, add the song to the end of the queue
-                        context.queue.push(newTrack);
-                    }
+    processQueue(context: DJContext, isSkip = false): void {
+        const {
+            audioPlayer,
+            queue,
+            currentTrackDetails: details,
+            singleLoopEnabled,
+            queueLoopEnabled,
+        } = context;
+        if (audioPlayer.state.status === AudioPlayerStatus.Idle) {
+            // if there's a current track, handle it if we're looping a track or the queue
+            if (details) {
+                if (singleLoopEnabled && !isSkip) {
+                    // if we're looping the same song, add it back to the start
+                    queue.unshift({
+                        details,
+                        resource: createAudioResourceForTrack(details),
+                    });
+                } else if (queueLoopEnabled) {
+                    // if we're looping the queue, add the song to the end of the queue
+                    queue.push({
+                        details,
+                        resource: createAudioResourceForTrack(details),
+                    });
                 }
             }
+
+            const track = queue.shift();
+            if (track) {
+                audioPlayer.play(track.resource);
+            }
+
             context.currentTrackDetails = track?.details;
         }
     }
@@ -159,7 +171,7 @@ export class HACTheDJ {
     skip(guild: GuildId): void {
         const context = this.getContext(guild);
         context.audioPlayer.stop(true);
-        this.processQueue(context);
+        this.processQueue(context, true);
     }
 
     shuffle(guild: GuildId): void {

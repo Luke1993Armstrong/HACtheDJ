@@ -94,6 +94,7 @@ client.on("messageCreate", async (message) => {
         const sourceStream = ytdl.downloadFromInfo(videoInfo, {
             filter: "audioonly",
             quality: "highestaudio",
+            highWaterMark: 1 << 25 // Make the buffer 32MiB; otherwise we get a connResetException
         });
         const resource = createAudioResource(sourceStream);
         DJ.queue(guildId, { resource });
